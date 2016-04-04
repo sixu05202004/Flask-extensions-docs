@@ -1,0 +1,159 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>欢迎来到 Flask_Dashed 的文档! &mdash; Flask_Dashed 0.1b documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1b',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="top" title="Flask_Dashed 0.1b documentation" href="#" />
+    <link rel="next" title="Api" href="api.html" /> 
+  </head>
+  <body>
+  
+  
+  <div class=indexwrapper>
+  
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="flask-dashed">
+<h1>欢迎来到 Flask_Dashed 的文档!<a class="headerlink" href="#flask-dashed" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>介绍<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<img alt="https://secure.travis-ci.org/jeanphix/Flask-Dashed.png" src="https://secure.travis-ci.org/jeanphix/Flask-Dashed.png" />
+<p>Flask-Dashed 提供构建简单以及具有扩展性的管理界面的工具。</p>
+<p>在线演示: <a class="reference external" href="http://flask-dashed.jeanphi.fr/">http://flask-dashed.jeanphi.fr/</a> (需要 Github 账号)。</p>
+<p>列表视图:</p>
+<img alt="_images/screen.png" src="_images/screen.png" />
+<p>表单视图:</p>
+<img alt="_images/screen-edit.png" src="_images/screen-edit.png" />
+</div>
+<div class="section" id="id2">
+<h2>安装<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>pip install Flask-Dashed</div></blockquote>
+</div>
+<div class="section" id="id3">
+<h2>最小的使用<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>代码:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">flask_dashed.admin</span> <span class="kn">import</span> <span class="n">Admin</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">admin</span> <span class="o">=</span> <span class="n">Admin</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>示例应用程序: <a class="reference external" href="http://github.com/jeanphix/flask-dashed-demo">http://github.com/jeanphix/flask-dashed-demo</a></p>
+</div>
+<div class="section" id="id4">
+<h2>安全地处理<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>保护(“武装”)所有模块端:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">session</span>
+
+<span class="n">book_module</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">BookModule</span><span class="p">,</span> <span class="s">&#39;/books&#39;</span><span class="p">,</span> <span class="s">&#39;books&#39;</span><span class="p">,</span>
+    <span class="s">&#39;book management&#39;</span><span class="p">)</span>
+
+<span class="nd">@book_module.secure</span><span class="p">(</span><span class="n">http_code</span><span class="o">=</span><span class="mi">401</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">login_required</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s">&quot;user&quot;</span> <span class="ow">in</span> <span class="n">session</span>
+</pre></div>
+</div>
+<p>保护(“武装”)特定的模块端:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@book_module.secure_endpoint</span><span class="p">(</span><span class="s">&#39;edit&#39;</span><span class="p">,</span> <span class="n">http_code</span><span class="o">=</span><span class="mi">403</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">check_edit_credential</span><span class="p">(</span><span class="n">view</span><span class="p">):</span>
+    <span class="c"># I&#39;m now signed in, may I modify the ressource?</span>
+    <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">can_edit_book</span><span class="p">(</span><span class="n">view</span><span class="o">.</span><span class="n">object</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>模块组织<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>由于管理节点( node )注册到一个“树”，因此很容易地管理它们。:</p>
+<div class="highlight-python"><pre>library = admin.register_node('/library', 'library', my library)
+book_module = admin.register_module(BookModule, '/books', 'books',
+    'book management', parent=library)</pre>
+</div>
+<p>为了满足你的需求，导航和面包屑会自动地建立。子模块的安全将会继承自父模块。</p>
+</div>
+<div class="section" id="sqlalchemy">
+<h2>SQLALchemy 扩展<a class="headerlink" href="#sqlalchemy" title="Permalink to this headline">¶</a></h2>
+<p>Code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">flask_dashed.ext.sqlalchemy</span> <span class="kn">import</span> <span class="n">ModelAdminModule</span>
+
+
+<span class="k">class</span> <span class="nc">BookModule</span><span class="p">(</span><span class="n">ModelAdminModule</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Book</span>
+    <span class="n">db_session</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span>
+
+<span class="n">book_module</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">BookModule</span><span class="p">,</span> <span class="s">&#39;/books&#39;</span><span class="p">,</span> <span class="s">&#39;books&#39;</span><span class="p">,</span>
+    <span class="s">&#39;book management&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="api">
+<h2>API 参考<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Api</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#admin">Admin 对象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id1">Admin 模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#sqlalchemy">SQLAlchemy 扩展</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h1>索引和表<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  
+    <a href="http://github.com/jeanphix/Flask-Dashed"><img style="position: fixed; top: 0; right: 0; border: 0;"
+    src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+  
+
+  
+  </div>
+  
+
+  </body>
+</html>

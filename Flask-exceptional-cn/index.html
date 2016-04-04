@@ -1,0 +1,374 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Flask-Exceptional &mdash; Flask-Exceptional 0.5.4 documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.5.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Flask-Exceptional 0.5.4 documentation" href="#" /> 
+  </head>
+  <body>
+  
+  
+  <div class=indexwrapper>
+  
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-flask.ext.exceptional">
+<span id="flask-exceptional"></span><h1>Flask-Exceptional<a class="headerlink" href="#module-flask.ext.exceptional" title="Permalink to this headline">¶</a></h1>
+<p>Flask-Exceptional 为 <a class="reference external" href="http://flask.pocoo.org/">Flask</a> 添加了 <a class="reference external" href="http://www.exceptional.io/">Exceptional</a> 支持。Exceptional 会捕获到你的应用程序中的错误，实时地报告它们，并且会收集你需要快速地修复它们的一些信息。访问 <a class="reference external" href="http://www.exceptional.io">http://www.exceptional.io</a> 去试试。</p>
+<div class="section" id="id1">
+<h2>安装<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>接下来的文档是假设你拥有一个 Exceptional 账号。用 pip 安装这个扩展是简单的:</p>
+<div class="highlight-python"><pre>$ pip install Flask-Exceptional</pre>
+</div>
+<p>或者用 easy_install 安装它:</p>
+<div class="highlight-python"><pre>$ easy_install Flask-Exceptional</pre>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>快速入门<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>在安装 Flask-Exceptional 后，所有你必须要做的就是创建一个 Flask 应用程序，配置 Exceptional API 密钥，接着创建 <a class="reference internal" href="#flask.ext.exceptional.Exceptional" title="flask.ext.exceptional.Exceptional"><tt class="xref py py-class docutils literal"><span class="pre">Exceptional</span></tt></a> 对象。正是这样的简单:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">flask.ext.exceptional</span> <span class="kn">import</span> <span class="n">Exceptional</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;EXCEPTIONAL_API_KEY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;exceptional_forty_character_unique_key&quot;</span>
+<span class="n">exceptional</span> <span class="o">=</span> <span class="n">Exceptional</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>你的应用程序是被配置成基于云的错误监控！你可以通过调用 <a class="reference internal" href="#flask.ext.exceptional.Exceptional.test" title="flask.ext.exceptional.Exceptional.test"><tt class="xref py py-meth docutils literal"><span class="pre">Exceptional.test()</span></tt></a> 方法来验证配置是否正常工作:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Exceptional</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>请翻阅接下来的章节获取更多关于 Flask-Exceptional 可用的配置项的细节。</p>
+</div>
+<div class="section" id="id3">
+<h2>配置<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>Flask-Exceptional 中存在如下的配置项:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="40%" />
+<col width="60%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><cite>EXCEPTIONAL_API_KEY</cite></td>
+<td><p class="first">你的应用程序的Exceptional API 密钥。
+登录到 Exceptional，选择你的应用程序，
+点击 <em>APP SETTINGS</em> 链接。显示的
+API 密钥就是这里要用到的。</p>
+<p class="last">试图不提供 API 密钥而创建扩展将导致
+登录警告，但应用程序将继续正常运行。</p>
+</td>
+</tr>
+<tr class="row-even"><td><cite>EXCEPTIONAL_DEBUG_URL</cite></td>
+<td>如果你的应用程序以调式模式运行的话，
+Exceptional 将不会捕获错误。配置这个值
+是为了在调试模式中捕获错误数据。
+比如，你可能使用一个 <a class="reference external" href="http://requestb.in/">RequestBin</a> 网址
+调试你的应用程序。JSON 错误数据会被以压缩形式
+POSTed 到这个网址，
+而 Exceptional 需要解压这些数据。</td>
+</tr>
+<tr class="row-odd"><td><cite>EXCEPTIONAL_HTTP_CODES</cite></td>
+<td><p class="first">用 Exceptional 追踪的 HTTP 错误码列表。</p>
+<p class="last">默认为标准的 HTTP 4xx 错误码。</p>
+</td>
+</tr>
+<tr class="row-even"><td><cite>EXCEPTIONAL_PARAMETER_FILTER</cite></td>
+<td><p class="first">列表值，用来过滤发给 Exceptional 的参数数据。
+参数数据包括 <tt class="docutils literal"><span class="pre">request.form</span></tt> 和 <tt class="docutils literal"><span class="pre">request.files</span></tt>
+中的所有。</p>
+<p>例如，为了过滤密码你可以使用：</p>
+<p class="last"><tt class="docutils literal"><span class="pre">['password',</span> <span class="pre">'password_confirm']</span></tt></p>
+</td>
+</tr>
+<tr class="row-odd"><td><cite>EXCEPTIONAL_ENVIRONMENT_FILTER</cite></td>
+<td><p class="first">列表值，用来过滤发给 Exceptional 的环境数据。
+环境数据包含 Flask 应用程序配置以及目前 OS
+环境。OS 环境值前缀是 <tt class="docutils literal"><span class="pre">'os.'</span></tt>。</p>
+<p>例如，为了过滤SQLAlchemy 数据库 URL以及
+所有的 OS 环境值，使用：</p>
+<p><tt class="docutils literal"><span class="pre">['SQLALCHEMY_DATABASE_URI',</span> <span class="pre">'os.*']</span></tt></p>
+<p class="last">默认值是  <tt class="docutils literal"><span class="pre">['SECRET_KEY']</span></tt>。</p>
+</td>
+</tr>
+<tr class="row-even"><td><cite>EXCEPTIONAL_SESSION_FILTER</cite></td>
+<td>列表值，用来过滤发给 Exceptional 的会话数据。</td>
+</tr>
+<tr class="row-odd"><td><cite>EXCEPTIONAL_HEADER_FILTER</cite></td>
+<td>列表值，用来过滤发给 Exceptional 的 HTTP 头数据。</td>
+</tr>
+<tr class="row-even"><td><cite>EXCEPTIONAL_COOKIE_FILTER</cite></td>
+<td>名称的列表，用来过滤发给 Exceptional 的
+HTTP Cookie 头数据。</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">所有配置中的过滤列表接受字符串以及正则表达式。</p>
+</div>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="flask.ext.exceptional.Exceptional">
+<em class="property">class </em><tt class="descclassname">flask.ext.exceptional.</tt><tt class="descname">Exceptional</tt><big>(</big><em>app=None</em><big>)</big><a class="headerlink" href="#flask.ext.exceptional.Exceptional" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extension for tracking application errors with Exceptional.
+Errors are not tracked if DEBUG is True. The application will
+log a warning if no <tt class="docutils literal"><span class="pre">EXCEPTIONAL_API_KEY</span></tt> has been configured.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>app</strong> &#8211; Default None. The Flask application to track errors
+for. If the app is not provided on creation, then it
+can be provided later via <a class="reference internal" href="#flask.ext.exceptional.Exceptional.init_app" title="flask.ext.exceptional.Exceptional.init_app"><tt class="xref py py-meth docutils literal"><span class="pre">init_app()</span></tt></a>.</td>
+</tr>
+</tbody>
+</table>
+<dl class="staticmethod">
+<dt id="flask.ext.exceptional.Exceptional.context">
+<em class="property">static </em><tt class="descname">context</tt><big>(</big><em>data=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#flask.ext.exceptional.Exceptional.context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add extra context data to the current tracked exception. The context
+data is only valid for the current request. Multiple calls to this
+method will update any existing context with new data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> &#8211; Default <tt class="docutils literal"><span class="pre">None</span></tt>. A dictionary of context data.</li>
+<li><strong>kwargs</strong> &#8211; A series of keyword arguments to use as context data.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="flask.ext.exceptional.Exceptional.init_app">
+<tt class="descname">init_app</tt><big>(</big><em>app</em><big>)</big><a class="headerlink" href="#flask.ext.exceptional.Exceptional.init_app" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize this Exceptional extension.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>app</strong> &#8211; The Flask application to track errors for.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="flask.ext.exceptional.Exceptional.publish">
+<em class="property">static </em><tt class="descname">publish</tt><big>(</big><em>config</em>, <em>traceback</em><big>)</big><a class="headerlink" href="#flask.ext.exceptional.Exceptional.publish" title="Permalink to this definition">¶</a></dt>
+<dd><p>Publish the given traceback directly to Exceptional. This method is
+useful for tracking errors that occur outside the context of a Flask
+request. For example, this may be called from an asynchronous queue.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>config</strong> &#8211; A Flask application configuration object. Accepts either
+<tt class="xref py py-class docutils literal"><span class="pre">flask.Config</span></tt> or the object types allowed by
+<tt class="xref py py-meth docutils literal"><span class="pre">flask.Config.from_object()</span></tt>.</li>
+<li><strong>traceback</strong> &#8211; A <tt class="xref py py-class docutils literal"><span class="pre">werkzeug.debug.tbtools.Traceback</span></tt> instance
+to publish.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="flask.ext.exceptional.Exceptional.test">
+<em class="property">static </em><tt class="descname">test</tt><big>(</big><em>config</em><big>)</big><a class="headerlink" href="#flask.ext.exceptional.Exceptional.test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the given Flask configuration. If configured correctly,
+an error will be tracked by Exceptional for your app. Unlike
+the initialized extension, this test will post data to Exceptional,
+regardless of the configured <tt class="docutils literal"><span class="pre">DEBUG</span></tt> setting.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> &#8211; The Flask application configuration object to test.
+Accepts either <tt class="xref py py-class docutils literal"><span class="pre">flask.Config</span></tt> or the object
+types allowed by <tt class="xref py py-meth docutils literal"><span class="pre">flask.Config.from_object()</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="changelog">
+<h2>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="version-0-5-4">
+<h3>Version 0.5.4<a class="headerlink" href="#version-0-5-4" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Updated JSON implementation import to work with Flask 0.10.</li>
+</ul>
+</div>
+<div class="section" id="version-0-5-3">
+<h3>Version 0.5.3<a class="headerlink" href="#version-0-5-3" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Fixed <a class="reference internal" href="#flask.ext.exceptional.Exceptional.publish" title="flask.ext.exceptional.Exceptional.publish"><tt class="xref py py-meth docutils literal"><span class="pre">Exceptional.publish()</span></tt></a> to no longer dereference a request context.</li>
+</ul>
+</div>
+<div class="section" id="version-0-5-2">
+<h3>Version 0.5.2<a class="headerlink" href="#version-0-5-2" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Unwind broken _app_ctx_stack usage.</li>
+</ul>
+</div>
+<div class="section" id="version-0-5-1">
+<h3>Version 0.5.1<a class="headerlink" href="#version-0-5-1" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Handle malformed HTTP response status-line from Exceptional.</li>
+</ul>
+</div>
+<div class="section" id="version-0-5">
+<h3>Version 0.5<a class="headerlink" href="#version-0-5" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Updated with Flask 0.8 extension structure recommendations and 0.9
+_app_ctx_stack.</li>
+<li>Added <tt class="docutils literal"><span class="pre">{'application_environment':</span> <span class="pre">'loaded_libraries':</span> <span class="pre">{...}}</span></tt> API data.</li>
+</ul>
+</div>
+<div class="section" id="version-0-4-9">
+<h3>Version 0.4.9<a class="headerlink" href="#version-0-4-9" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Added the <a class="reference internal" href="#flask.ext.exceptional.Exceptional.context" title="flask.ext.exceptional.Exceptional.context"><tt class="xref py py-meth docutils literal"><span class="pre">Exceptional.context()</span></tt></a> method to support Exceptional&#8217;s extra
+context data API.</li>
+<li>Updated to reference the new exceptional.io domain.</li>
+</ul>
+</div>
+<div class="section" id="version-0-4-8">
+<h3>Version 0.4.8<a class="headerlink" href="#version-0-4-8" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Updated to publish UTF-8 encoded data to Exceptional.</li>
+<li>Added support for <tt class="docutils literal"><span class="pre">request.json</span></tt> data.</li>
+</ul>
+</div>
+<div class="section" id="version-0-4-7">
+<h3>Version 0.4.7<a class="headerlink" href="#version-0-4-7" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Added the <a class="reference internal" href="#flask.ext.exceptional.Exceptional.publish" title="flask.ext.exceptional.Exceptional.publish"><tt class="xref py py-meth docutils literal"><span class="pre">Exceptional.publish()</span></tt></a> method to support Exceptional tracking
+outside the context of a request.</li>
+</ul>
+</div>
+<div class="section" id="version-0-4-6">
+<h3>Version 0.4.6<a class="headerlink" href="#version-0-4-6" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Corrected <tt class="docutils literal"><span class="pre">occurred_at</span></tt> timestamp to be formatted as Zulu.</li>
+<li>Fixed JSON serialization issue by coercing all environment variables to
+strings.</li>
+</ul>
+</div>
+<div class="section" id="version-0-4-5">
+<h3>Version 0.4.5<a class="headerlink" href="#version-0-4-5" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Updated to log a warning on repeated extension initialization attempts.</li>
+</ul>
+</div>
+<div class="section" id="version-0-4-4">
+<h3>Version 0.4.4<a class="headerlink" href="#version-0-4-4" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Fixed to workaround Python 2.5 issue where <tt class="xref py py-meth docutils literal"><span class="pre">urlopen()</span></tt> raises a
+<tt class="xref py py-class docutils literal"><span class="pre">HTTPError</span></tt> even though the HTTP response code indicates success.</li>
+</ul>
+</div>
+<div class="section" id="version-0-4-3">
+<h3>Version 0.4.3<a class="headerlink" href="#version-0-4-3" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Changed so that <tt class="docutils literal"><span class="pre">app.extensions['exceptional']</span></tt> targets the
+<a class="reference internal" href="#flask.ext.exceptional.Exceptional" title="flask.ext.exceptional.Exceptional"><tt class="xref py py-class docutils literal"><span class="pre">Exceptional</span></tt></a> extension instance.</li>
+</ul>
+</div>
+<div class="section" id="version-0-4-2">
+<h3>Version 0.4.2<a class="headerlink" href="#version-0-4-2" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Updated to support Python 2.5.</li>
+</ul>
+</div>
+<div class="section" id="version-0-4-1">
+<h3>Version 0.4.1<a class="headerlink" href="#version-0-4-1" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Updated to support Flask 0.7 blueprints.</li>
+</ul>
+</div>
+<div class="section" id="version-0-4">
+<h3>Version 0.4<a class="headerlink" href="#version-0-4" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Updated to support Python 2.6.</li>
+<li>Added <cite>EXCEPTIONAL_DEBUG_URL</cite> testing environment variable override.</li>
+</ul>
+</div>
+<div class="section" id="version-0-3">
+<h3>Version 0.3<a class="headerlink" href="#version-0-3" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Updated to handle unreachable Exceptional service API.</li>
+</ul>
+</div>
+<div class="section" id="version-0-2">
+<h3>Version 0.2<a class="headerlink" href="#version-0-2" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Added <a class="reference internal" href="#flask.ext.exceptional.Exceptional.test" title="flask.ext.exceptional.Exceptional.test"><tt class="xref py py-meth docutils literal"><span class="pre">Exceptional.test()</span></tt></a> method.</li>
+</ul>
+</div>
+<div class="section" id="version-0-1">
+<h3>Version 0.1<a class="headerlink" href="#version-0-1" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Initial public release.</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  
+    <a href="http://github.com/jzempel/flask-exceptional"><img style="position: fixed; top: 0; right: 0; border: 0;"
+    src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+  
+
+  
+  </div>
+  
+
+  </body>
+</html>

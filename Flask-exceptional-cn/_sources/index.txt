@@ -1,0 +1,102 @@
+Flask-Exceptional
+=================
+
+.. module:: flask.ext.exceptional
+
+Flask-Exceptional 为 `Flask`_ 添加了 `Exceptional`_ 支持。Exceptional 会捕获到你的应用程序中的错误，实时地报告它们，并且会收集你需要快速地修复它们的一些信息。访问 http://www.exceptional.io 去试试。
+
+安装
+------------
+
+接下来的文档是假设你拥有一个 Exceptional 账号。用 pip 安装这个扩展是简单的::
+
+    $ pip install Flask-Exceptional
+
+或者用 easy_install 安装它::
+
+    $ easy_install Flask-Exceptional
+
+快速入门
+----------
+
+在安装 Flask-Exceptional 后，所有你必须要做的就是创建一个 Flask 应用程序，配置 Exceptional API 密钥，接着创建 :class:`Exceptional` 对象。正是这样的简单::
+
+    from flask import Flask
+    from flask.ext.exceptional import Exceptional
+
+    app = Flask(__name__)
+    app.config["EXCEPTIONAL_API_KEY"] = "exceptional_forty_character_unique_key"
+    exceptional = Exceptional(app)
+
+你的应用程序是被配置成基于云的错误监控！你可以通过调用 :meth:`Exceptional.test` 方法来验证配置是否正常工作::
+
+    Exceptional.test(app.config)
+
+请翻阅接下来的章节获取更多关于 Flask-Exceptional 可用的配置项的细节。
+
+配置
+-------------
+
+Flask-Exceptional 中存在如下的配置项:
+
+=================================== ====================================================
+`EXCEPTIONAL_API_KEY`               你的应用程序的Exceptional API 密钥。
+                                    登录到 Exceptional，选择你的应用程序，
+                                    点击 *APP SETTINGS* 链接。显示的
+                                    API 密钥就是这里要用到的。 
+
+                                    试图不提供 API 密钥而创建扩展将导致
+                                    登录警告，但应用程序将继续正常运行。
+
+`EXCEPTIONAL_DEBUG_URL`             如果你的应用程序以调式模式运行的话，
+                                    Exceptional 将不会捕获错误。配置这个值
+                                    是为了在调试模式中捕获错误数据。
+                                    比如，你可能使用一个 `RequestBin`_ 网址
+                                    调试你的应用程序。JSON 错误数据会被以压缩形式
+                                    POSTed 到这个网址，
+                                    而 Exceptional 需要解压这些数据。
+
+`EXCEPTIONAL_HTTP_CODES`            用 Exceptional 追踪的 HTTP 错误码列表。
+
+                                    默认为标准的 HTTP 4xx 错误码。
+
+`EXCEPTIONAL_PARAMETER_FILTER`      列表值，用来过滤发给 Exceptional 的参数数据。
+                                    参数数据包括 ``request.form`` 和 ``request.files`` 
+                                    中的所有。
+
+                                    例如，为了过滤密码你可以使用：
+
+                                    ``['password', 'password_confirm']``
+
+`EXCEPTIONAL_ENVIRONMENT_FILTER`    列表值，用来过滤发给 Exceptional 的环境数据。
+                                    环境数据包含 Flask 应用程序配置以及目前 OS 
+                                    环境。OS 环境值前缀是 ``'os.'``。
+
+                                    例如，为了过滤SQLAlchemy 数据库 URL以及
+                                    所有的 OS 环境值，使用：
+
+                                    ``['SQLALCHEMY_DATABASE_URI', 'os.*']``
+
+                                    默认值是  ``['SECRET_KEY']``。
+
+`EXCEPTIONAL_SESSION_FILTER`        列表值，用来过滤发给 Exceptional 的会话数据。
+
+`EXCEPTIONAL_HEADER_FILTER`         列表值，用来过滤发给 Exceptional 的 HTTP 头数据。
+
+`EXCEPTIONAL_COOKIE_FILTER`         名称的列表，用来过滤发给 Exceptional 的 
+                                    HTTP Cookie 头数据。
+=================================== ====================================================
+
+.. note:: 所有配置中的过滤列表接受字符串以及正则表达式。
+
+API
+---
+
+.. autoclass:: Exceptional
+   :members:
+
+.. include:: ../CHANGES
+
+.. _Exceptional: http://www.exceptional.io/
+.. _Flask: http://flask.pocoo.org/
+.. _RequestBin: http://requestb.in/

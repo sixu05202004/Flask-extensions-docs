@@ -4,6 +4,7 @@ Flask-extensions-dcos
 
 Flask 扩展中文文档合集
 
+* Flask-Admin-cn: 翻译完成
 * Flask-Babel-cn: http://www.pythondoc.com/flask-babel/index.html
 * Flask-cache-cn: http://www.pythondoc.com/flask-cache/index.html
 * Flask-dashed-cn: http://www.pythondoc.com/flask-dashed/index.html

@@ -1,0 +1,49 @@
+{%- extends "basic/layout.html" %}
+{%- block extrahead %}
+  {{ super() }}
+  {% if theme_touch_icon %}
+  <link rel="apple-touch-icon" href="{{ pathto('_static/' ~ theme_touch_icon, 1) }}" />
+  {% endif %}
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+{% endblock %}
+{%- block relbar2 %}{% endblock %}
+{% block header %}
+  {{ super() }}
+  {% if pagename == 'index' %}
+  <div class=indexwrapper>
+  {% endif %}
+{% endblock %}
+{%- block footer %}
+  <div class="footer">
+    &copy; Copyright {{ copyright }}.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+
+    <!-- google 广告 -->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- pythondoc 首页下方 -->
+    <ins class="adsbygoogle"
+     style="display:inline-block;width:970px;height:90px"
+     data-ad-client="ca-pub-3421553373953599"
+     data-ad-slot="6985889234"></ins>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+
+
+    <!-- 百度统计 -->
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "//hm.baidu.com/hm.js?9adc7a1c86496c8e2bc61c4f8fc92d30";
+          var s = document.getElementsByTagName("script")[0]; 
+          s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+  </div>
+  {% if pagename == 'index' %}
+  </div>
+  {% endif %}
+{%- endblock %}
